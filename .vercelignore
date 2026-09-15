@@ -1,0 +1,6 @@
+app_godot_32bit/
+builds/
+docs/
+*.apk
+*.x86_64
+*.pck
