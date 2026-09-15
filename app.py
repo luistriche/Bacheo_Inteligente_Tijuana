@@ -119,9 +119,9 @@ def api_reportar():
             if not v_info: raise ValueError()
         except:
             nombre_custom = str(vialidad_input)[:50]
-            cursor.execute("INSERT INTO Vialidades (nombre_vialidad, tipo_vialidad, delegacion, aforo_promedio_diario) VALUES (?, 'Reporte Ciudadano', 'Centro', 5000)", (nombre_custom,))
+            cursor.execute("INSERT INTO Vialidades (nombre_vialidad, tipo_vialidad, delegacion, aforo_promedio_diario) VALUES (?, 'Residencial / Local', 'Centro', 5000)", (nombre_custom,))
             id_vialidad = cursor.lastrowid
-            v_info = {'nombre_vialidad': nombre_custom, 'tipo_vialidad': 'Reporte Ciudadano', 'aforo_promedio_diario': 5000}
+            v_info = {'nombre_vialidad': nombre_custom, 'tipo_vialidad': 'Residencial / Local', 'aforo_promedio_diario': 5000}
 
         
         # 2. Consultar características de la vialidad
