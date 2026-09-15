@@ -43,6 +43,8 @@ var bache_seleccionado = null
 var tts_player = AudioStreamPlayer.new()
 
 func _ready():
+	if OS.get_name() == "Android":
+		OS.request_permissions()
 	_setup_options()
 	_cargar_datos_iniciales()
 	_mostrar_vista("portada")
