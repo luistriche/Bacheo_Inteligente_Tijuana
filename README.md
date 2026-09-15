@@ -87,3 +87,11 @@ python app.py              # Inicia la API local en http://127.0.0.1:5000
 ## ⚖️ Licencia y Reconocimientos
 
 Proyecto desarrollado bajo Licencia MIT por **Luis Armando Triche Ramírez** para la Universidad Nacional Rosario Castellanos. Libre para uso académico, extensión y trabajo colaborativo del equipo de la carrera de Ciencia de Datos para Negocios.
+
+## Agradecimientos y Docentes Asesores (UNRC)
+Este proyecto integra los conocimientos transversales de las siguientes asignaturas y sus respectivos catedráticos:
+- **Cálculo Integral:** José Feliciano González Reyes
+- **Probabilidad:** Yesenia Gamez
+- **Contabilidad Financiera:** Armando Cardona Salgado
+- **Pensamiento Complejo para la Argumentación:** Deysy Margarita Tovar Hernández
+- **Estructuras de Datos:** Adrián Silva Ramírez
