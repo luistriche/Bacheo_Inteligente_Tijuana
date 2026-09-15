@@ -43,6 +43,31 @@ var bache_seleccionado = null
 var tts_player = AudioStreamPlayer.new()
 
 func _ready():
+
+	var btn_mute = Button.new()
+	btn_mute.text = "🔇 Silenciar Voz"
+	var style_mute = StyleBoxFlat.new()
+	style_mute.bg_color = Color("#4b5563")
+	style_mute.corner_radius_top_left = 15
+	style_mute.corner_radius_top_right = 15
+	style_mute.corner_radius_bottom_left = 15
+	style_mute.corner_radius_bottom_right = 15
+	btn_mute.add_stylebox_override("normal", style_mute)
+	btn_mute.rect_min_size = Vector2(200, 60)
+
+	btn_mute.set_anchor(MARGIN_RIGHT, 1.0)
+	btn_mute.set_anchor(MARGIN_LEFT, 1.0)
+	btn_mute.set_anchor(MARGIN_TOP, 0.0)
+	btn_mute.set_anchor(MARGIN_BOTTOM, 0.0)
+	btn_mute.set_margin(MARGIN_RIGHT, -20)
+	btn_mute.set_margin(MARGIN_LEFT, -220)
+	btn_mute.set_margin(MARGIN_TOP, 20)
+	btn_mute.set_margin(MARGIN_BOTTOM, 80)
+
+	
+	btn_mute.connect("pressed", self, "_on_BtnMute_pressed")
+	$Views/ViewPortada.add_child(btn_mute)
+
 	_aplicar_psicologia_color()
 	if OS.get_name() == "Android":
 		OS.request_permissions()
@@ -56,17 +81,13 @@ func _ready():
 	$Views/ViewPortada/Center/MenuButtons/BtnNavCiudadano.grab_focus()
 
 func _play_tts(voice_name):
-	var f = File.new()
 	var path = "res://assets/audio/" + voice_name + ".ogg"
-	if f.open(path, File.READ) == OK:
-		var bytes = f.get_buffer(f.get_len())
-		f.close()
-		var stream = AudioStreamOGGVorbis.new()
-		stream.data = bytes
+	var stream = load(path)
+	if stream:
 		tts_player.stream = stream
 		tts_player.play()
 	else:
-		print("TTS not found: ", path)
+		print("TTS no cargado: ", path)
 
 func _play_click():
 	if sfx_click:
@@ -352,3 +373,8 @@ func _aplicar_psicologia_color():
 				btn.text = "❌ Salir de la App"
 			else:
 				btn.visible = false
+
+
+func _on_BtnMute_pressed():
+	if tts_player.playing:
+		tts_player.stop()

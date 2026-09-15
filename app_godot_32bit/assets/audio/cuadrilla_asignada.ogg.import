@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/cuadrilla_asignada.ogg-5adede0fe58ad2b835aa3fbe2d1e2592.oggstr"
+
+[deps]
+
+source_file="res://assets/audio/cuadrilla_asignada.ogg"
+dest_files=[ "res://.import/cuadrilla_asignada.ogg-5adede0fe58ad2b835aa3fbe2d1e2592.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

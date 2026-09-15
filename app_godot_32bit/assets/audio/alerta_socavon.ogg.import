@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/alerta_socavon.ogg-6c43e5a7cbedb7082ba50c06cae406d7.oggstr"
+
+[deps]
+
+source_file="res://assets/audio/alerta_socavon.ogg"
+dest_files=[ "res://.import/alerta_socavon.ogg-6c43e5a7cbedb7082ba50c06cae406d7.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0
