@@ -156,7 +156,7 @@ class PotholeVisionClassifier:
                     }
                 }
                 
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={GEMINI_API_KEY}"
                 resp = requests.post(url, json=payload, headers={'Content-Type': 'application/json'}, timeout=12)
                 
                 if resp.status_code == 200:
