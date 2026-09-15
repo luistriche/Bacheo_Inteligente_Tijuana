@@ -244,7 +244,6 @@ def api_baches_mapa():
     
     return jsonify({'puntos': puntos})
 
-@app.route('/api/despachar/<int:id_reporte>', methods=['POST'])
 import requests
 
 TELEGRAM_TOKEN = "8893868614:AAFiAB5Bsy1noT1r2EdcX4AZiC9C3FW8XiE"
@@ -325,6 +324,7 @@ def telegram_webhook():
         print("Telegram error:", e)
         
     return jsonify({'status': 'ok'})
+@app.route('/api/despachar/<int:id_reporte>', methods=['POST'])
 def api_despachar(id_reporte):
     conn = get_db()
     cursor = conn.cursor()
