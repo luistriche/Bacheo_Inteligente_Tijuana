@@ -99,22 +99,35 @@ def index():
 @app.route('/api/reportar', methods=['POST'])
 def api_reportar():
     try:
-        id_vialidad = int(request.form.get('id_vialidad'))
+        vialidad_input = request.form.get('id_vialidad', '1')
         latitud = float(request.form.get('latitud', 32.5385))
         longitud = float(request.form.get('longitud', -116.9241))
         
-        # 1. Recuperar archivo de imagen
         file = request.files.get('foto')
         if not file:
             return jsonify({'exito': False, 'error': 'No se proporcionó imagen'}), 400
             
         img_bytes = file.read()
         
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        try:
+            id_vialidad = int(vialidad_input)
+            cursor.execute("SELECT nombre_vialidad, tipo_vialidad, aforo_promedio_diario FROM Vialidades WHERE id_vialidad = ?", (id_vialidad,))
+            v_info = cursor.fetchone()
+            if not v_info: raise ValueError()
+        except:
+            nombre_custom = str(vialidad_input)[:50]
+            cursor.execute("INSERT INTO Vialidades (nombre_vialidad, tipo_vialidad, delegacion, aforo_promedio_diario) VALUES (?, 'Reporte Ciudadano', 'No Asignada', 5000)", (nombre_custom,))
+            id_vialidad = cursor.lastrowid
+            v_info = {'nombre_vialidad': nombre_custom, 'tipo_vialidad': 'Reporte Ciudadano', 'aforo_promedio_diario': 5000}
+
+        
         # 2. Consultar características de la vialidad
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT nombre_vialidad, tipo_vialidad, aforo_promedio_diario FROM Vialidades WHERE id_vialidad = ?", (id_vialidad,))
-        v_info = cursor.fetchone()
+
         
         es_industrial = "Industrial" in v_info['tipo_vialidad'] or "Bellas Artes" in v_info['nombre_vialidad']
         aforo_pesado = 0.95 if es_industrial else (0.4 if v_info['aforo_promedio_diario'] > 40000 else 0.15)

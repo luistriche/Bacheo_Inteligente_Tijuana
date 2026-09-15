@@ -340,7 +340,7 @@
                 </p>
 
                 <!-- Input nativo de cámara para Android / iOS / PC -->
-                <input type="file" id="fotoInput" accept="image/*" capture="environment" style="display: none;" onchange="handleImageSelection(event)">
+                <input type="file" id="fotoInput" accept="image/*"  style="display: none;" onchange="handleImageSelection(event)">
 
                 <button class="btn-capture" onclick="document.getElementById('fotoInput').click()">
                     📷 Tomar Foto / Subir Imagen
@@ -353,14 +353,12 @@
                 <form id="formReporte" style="margin-top: 1.2rem;" onsubmit="submitReporte(event)">
                     <div class="form-group">
                         <label>Vialidad / Corredor en Tijuana:</label>
-                        <select id="selectVialidad" required>
-                            <option value="">-- Selecciona la vialidad más cercana --</option>
+                        <input type="text" id="selectVialidad" list="listaVialidades" placeholder="Escribe tu calle o selecciona una de la lista..." required style="width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #ccc; font-family: inherit;">
+                        <datalist id="listaVialidades">
                             {% for v in vialidades %}
-                                <option value="{{ v['id_vialidad'] }}" data-tipo="{{ v['tipo_vialidad'] }}" data-delegacion="{{ v['delegacion'] }}">
-                                    {{ v['nombre_vialidad'] }} ({{ v['delegacion'] }})
-                                </option>
+                                <option value="{{ v['nombre_vialidad'] }}">
                             {% endfor %}
-                        </select>
+                        </datalist>
                     </div>
 
                     <div class="form-group" style="display: flex; gap: 0.75rem;">
