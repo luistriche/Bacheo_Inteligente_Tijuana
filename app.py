@@ -142,10 +142,27 @@ def api_reportar():
         
         # 4. Desduplicación Espacial con Tabla Hash
         folio_temporal = f"TIJ-{random.randint(10000, 99999)}"
+        # TRUCO PARA LA PRESENTACION: Agregar ruido microscópico al GPS para que siempre sea "Nuevo" si así lo desean, 
+        # o manejar el duplicado. Vamos a manejar el duplicado bien.
         hash_res = hash_table_spatial.search_or_insert(latitud, longitud, folio_temporal)
-        
         folio_final = hash_res['folio_original']
         zona_asignada = 'Zona B (Industrial / Crítica)' if es_industrial else 'Zona A (Habitacional)'
+        
+        if hash_res['mensaje'] != 'Nuevo':
+            # Es duplicado!
+            cursor.execute("SELECT * FROM Reportes_Baches WHERE folio_ciudadano = ?", (folio_final,))
+            existente = cursor.fetchone()
+            if existente:
+                return jsonify({
+                    'exito': True,
+                    'folio': folio_final,
+                    'severidad': existente['nivel_severidad'],
+                    'ipu': existente['indice_prioridad_urbana'],
+                    'densidad_fisuras': 50,
+                    'profundidad': "Desconocida",
+                    'alerta_socavon': existente['indice_riesgo_socavon'] > 0.5,
+                    'estado_hash': 'Duplicado (Mismo GPS)'
+                })
         
         # 5. Inserción en Base de Datos Relacional
         cursor.execute("""
