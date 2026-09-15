@@ -40,6 +40,7 @@ onready var http_node = $HTTPRequest
 
 var baches_locales = []
 var bache_seleccionado = null
+var tts_player = AudioStreamPlayer.new()
 
 func _ready():
 	_setup_options()
@@ -47,7 +48,22 @@ func _ready():
 	_mostrar_vista("portada")
 	modal_creditos.visible = false
 	http_node.connect("request_completed", self, "_on_http_completed")
+	add_child(tts_player)
+	_play_tts("bienvenida")
 	$Views/ViewPortada/Center/MenuButtons/BtnNavCiudadano.grab_focus()
+
+func _play_tts(voice_name):
+	var f = File.new()
+	var path = "res://assets/audio/" + voice_name + ".ogg"
+	if f.open(path, File.READ) == OK:
+		var bytes = f.get_buffer(f.get_len())
+		f.close()
+		var stream = AudioStreamOGGVorbis.new()
+		stream.data = bytes
+		tts_player.stream = stream
+		tts_player.play()
+	else:
+		print("TTS not found: ", path)
 
 func _play_click():
 	if sfx_click:
@@ -180,6 +196,9 @@ func _on_BtnEnviarReporte_pressed():
 	alert_socavon.visible = (riesgo_soc >= 0.7)
 	if riesgo_soc >= 0.7:
 		_play_alert()
+		_play_tts("alerta_socavon")
+	else:
+		_play_tts("reporte_generado")
 	
 	baches_locales.append({
 		"folio": nuevo_folio,
@@ -244,6 +263,7 @@ func _compare_ipu(a, b):
 func _on_BtnDespachar_pressed():
 	_play_click()
 	if baches_locales.size() > 0:
+		_play_tts("cuadrilla_asignada")
 		var b = baches_locales[0]
 		OS.alert("🚛 CUADRILLA NOCTURNA ASIGNADA:\n\n" + \
 			"Destino: " + b.vialidad + "\n" + \
@@ -259,6 +279,7 @@ func _on_BtnDespachar_pressed():
 
 func _on_BtnSyncFlask_pressed():
 	_play_click()
+	_play_tts("sincronizacion")
 	http_node.request("http://127.0.0.1:5000/api/cola_prioridad")
 	lbl_stats.text = "Sincronizando en tiempo real con servidor Flask y SQLite..."
 
