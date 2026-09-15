@@ -14,6 +14,13 @@ from structures import SpatialHashTable, PriorityQueueHeap, ElementoBacheHeap, P
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'bacheo_tijuana.db')
 
+import shutil
+if os.environ.get('VERCEL'):
+    TMP_DB_PATH = '/tmp/bacheo_tijuana.db'
+    if not os.path.exists(TMP_DB_PATH):
+        shutil.copy2(DB_PATH, TMP_DB_PATH)
+    DB_PATH = TMP_DB_PATH
+
 app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max upload
 
@@ -220,9 +227,13 @@ def api_despachar(id_reporte):
     conn.close()
     return jsonify({'exito': True, 'mensaje': f'Cuadrilla nocturna asignada con éxito al reporte #{id_reporte}.'})
 
+try:
+    cargar_heap_inicial()
+except Exception as e:
+    print("Warning: Could not load heap:", e)
+
 # Vercel Serverless Handler
 if __name__ == '__main__':
-    cargar_heap_inicial()
     print("\n=======================================================")
     print("🚀 PLATAFORMA DE BACHEO INTELIGENTE ACTIVA")
     print("👉 Abre en tu navegador: http://127.0.0.1:5000")
