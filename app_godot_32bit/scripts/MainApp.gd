@@ -282,7 +282,7 @@ func _on_BtnDespachar_pressed():
 func _on_BtnSyncFlask_pressed():
 	_play_click()
 	_play_tts("sincronizacion")
-	http_node.request("http://127.0.0.1:5000/api/cola_prioridad")
+	http_node.request("https://bacheo-inteligente-tijuana.vercel.app/api/cola_prioridad")
 	lbl_stats.text = "Sincronizando en tiempo real con servidor Flask y SQLite..."
 
 func _on_http_completed(result, response_code, headers, body):
