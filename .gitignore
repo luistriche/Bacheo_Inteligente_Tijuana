@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite-journal
+
+# Godot
+.import/
+export.cfg
+export_presets.cfg.bak
+
+# OS
+.DS_Store
+*.swp
+*~

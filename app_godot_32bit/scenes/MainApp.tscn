@@ -1,0 +1,610 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scripts/MainApp.gd" type="Script" id=1]
+[ext_resource path="res://assets/bg_cover.png" type="Texture" id=2]
+[ext_resource path="res://assets/logo_app.png" type="Texture" id=3]
+[ext_resource path="res://assets/audio/ui_click.wav" type="AudioStream" id=4]
+[ext_resource path="res://assets/audio/alert.wav" type="AudioStream" id=5]
+
+[node name="MainApp" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="BG" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 7
+
+[node name="AudioClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+volume_db = -4.0
+
+[node name="AudioAlert" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+volume_db = -2.0
+
+[node name="Views" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ViewPortada" type="Control" parent="Views"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Logo" type="TextureRect" parent="Views/ViewPortada"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -440.0
+margin_top = -240.0
+margin_right = -300.0
+margin_bottom = -100.0
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+
+[node name="HeaderBox" type="VBoxContainer" parent="Views/ViewPortada"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -280.0
+margin_top = -245.0
+margin_right = 440.0
+margin_bottom = -110.0
+custom_constants/separation = 3
+
+[node name="Institucion" type="Label" parent="Views/ViewPortada/HeaderBox"]
+margin_right = 720.0
+margin_bottom = 14.0
+text = "UNIVERSIDAD NACIONAL ROSARIO CASTELLANOS - SEDE TIJUANA"
+uppercase = true
+
+[node name="Titulo" type="Label" parent="Views/ViewPortada/HeaderBox"]
+margin_top = 17.0
+margin_right = 720.0
+margin_bottom = 48.0
+text = "SISTEMA INTEGRAL DE BACHEO INTELIGENTE Y PRIORIZACIÓN URBANA"
+
+[node name="Subtitulo" type="Label" parent="Views/ViewPortada/HeaderBox"]
+margin_top = 51.0
+margin_right = 720.0
+margin_bottom = 65.0
+text = "Licenciatura en Ciencias de Datos para Negocios (LCDN 301) | Ciclo Escolar 2026-2"
+
+[node name="Autor" type="Label" parent="Views/ViewPortada/HeaderBox"]
+margin_top = 68.0
+margin_right = 720.0
+margin_bottom = 82.0
+text = "Desarrollador Principal: LUIS ARMANDO TRICHE RAMÍREZ (Matrícula: 25251667-2)"
+
+[node name="BadgeCompat" type="Label" parent="Views/ViewPortada/HeaderBox"]
+margin_top = 85.0
+margin_right = 720.0
+margin_bottom = 116.0
+text = "COMPATIBLE CON PC Y ANDROID DE 32 BITS (ARMv7 & GLES2 UNIVERSAL)
+Motor Algorítmico: Max-Heap O(log n) | Tabla Hash O(1) | Base de Datos Relacional 3FN"
+autowrap = true
+
+[node name="Center" type="CenterContainer" parent="Views/ViewPortada"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -440.0
+margin_top = -90.0
+margin_right = 440.0
+margin_bottom = 240.0
+
+[node name="MenuButtons" type="VBoxContainer" parent="Views/ViewPortada/Center"]
+margin_left = 140.0
+margin_right = 740.0
+margin_bottom = 328.0
+rect_min_size = Vector2( 600, 0 )
+custom_constants/separation = 8
+
+[node name="BtnNavCiudadano" type="Button" parent="Views/ViewPortada/Center/MenuButtons"]
+margin_right = 600.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 48 )
+text = "📱 REGISTRAR NUEVA INSPECCIÓN / REPORTE VIAL"
+
+[node name="BtnNavMunicipio" type="Button" parent="Views/ViewPortada/Center/MenuButtons"]
+margin_top = 56.0
+margin_right = 600.0
+margin_bottom = 104.0
+rect_min_size = Vector2( 0, 48 )
+text = "🏛️ CENTRO DE MANDO MUNICIPAL (COLA DE PRIORIDAD MAX-HEAP)"
+
+[node name="BtnNavEstadisticas" type="Button" parent="Views/ViewPortada/Center/MenuButtons"]
+margin_top = 112.0
+margin_right = 600.0
+margin_bottom = 160.0
+rect_min_size = Vector2( 0, 48 )
+text = "📊 COMPARATIVA SISTÉMICA (ZONA A: 2,000 VS ZONA B: 5 SOCAVÓN)"
+
+[node name="BtnNavMetodologia" type="Button" parent="Views/ViewPortada/Center/MenuButtons"]
+margin_top = 168.0
+margin_right = 600.0
+margin_bottom = 216.0
+rect_min_size = Vector2( 0, 48 )
+text = "📜 SUSTENTACIÓN TEÓRICA: TOULMIN, FALACIAS Y NIF C-9"
+
+[node name="BtnNavCreditos" type="Button" parent="Views/ViewPortada/Center/MenuButtons"]
+margin_top = 224.0
+margin_right = 600.0
+margin_bottom = 272.0
+rect_min_size = Vector2( 0, 48 )
+text = "👥 REPOSITORIO COMUNITARIO Y CRÉDITOS DE EQUIPO"
+
+[node name="BtnSalir" type="Button" parent="Views/ViewPortada/Center/MenuButtons"]
+margin_top = 280.0
+margin_right = 600.0
+margin_bottom = 328.0
+rect_min_size = Vector2( 0, 48 )
+text = "🚪 SALIR DE LA APLICACIÓN"
+
+[node name="ViewCiudadano" type="Control" parent="Views"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="Panel" parent="Views/ViewCiudadano"]
+anchor_right = 1.0
+margin_bottom = 44.0
+
+[node name="BtnVolver1" type="Button" parent="Views/ViewCiudadano/TopBar"]
+margin_left = 12.0
+margin_top = 6.0
+margin_right = 180.0
+margin_bottom = 38.0
+text = "← VOLVER AL MENÚ"
+
+[node name="Title" type="Label" parent="Views/ViewCiudadano/TopBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 200.0
+text = "MÓDULO CIUDADANO: REGISTRO INTELIGENTE DE DAÑO VIAL"
+valign = 1
+
+[node name="Card" type="Panel" parent="Views/ViewCiudadano"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -380.0
+margin_top = -205.0
+margin_right = 380.0
+margin_bottom = 245.0
+
+[node name="VBox" type="VBoxContainer" parent="Views/ViewCiudadano/Card"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 20.0
+margin_top = 14.0
+margin_right = -20.0
+margin_bottom = -14.0
+custom_constants/separation = 8
+
+[node name="LblVialidad" type="Label" parent="Views/ViewCiudadano/Card/VBox"]
+margin_right = 720.0
+margin_bottom = 14.0
+text = "Vialidad en Tijuana:"
+
+[node name="OptVialidad" type="OptionButton" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 22.0
+margin_right = 720.0
+margin_bottom = 54.0
+rect_min_size = Vector2( 0, 32 )
+
+[node name="LblSeveridad" type="Label" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 62.0
+margin_right = 720.0
+margin_bottom = 76.0
+text = "Nivel de Deterioro Observado:"
+
+[node name="OptSeveridad" type="OptionButton" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 84.0
+margin_right = 720.0
+margin_bottom = 116.0
+rect_min_size = Vector2( 0, 32 )
+
+[node name="CheckIndustrial" type="CheckBox" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 124.0
+margin_right = 720.0
+margin_bottom = 148.0
+text = "Corredor Industrial / Carga Pesada (Otay)"
+
+[node name="CheckTransporte" type="CheckBox" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 156.0
+margin_right = 720.0
+margin_bottom = 180.0
+pressed = true
+text = "Ruta de Transporte Público Masivo (SITT / Camiones)"
+
+[node name="BtnEnviarReporte" type="Button" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 188.0
+margin_right = 720.0
+margin_bottom = 232.0
+rect_min_size = Vector2( 0, 44 )
+text = "⚡ CALCULAR PRIORIDAD URBANA (IPU) Y ENVIAR"
+
+[node name="LblResultado" type="Label" parent="Views/ViewCiudadano/Card/VBox"]
+margin_top = 240.0
+margin_right = 720.0
+margin_bottom = 271.0
+text = "Listo para procesar reportes ciudadanos..."
+autowrap = true
+
+[node name="AlertSocavon" type="Panel" parent="Views/ViewCiudadano/Card/VBox"]
+visible = false
+margin_top = 279.0
+margin_right = 720.0
+margin_bottom = 329.0
+rect_min_size = Vector2( 0, 50 )
+
+[node name="LblAlert" type="Label" parent="Views/ViewCiudadano/Card/VBox/AlertSocavon"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "⚠️ ALERTA GEOTÉCNICA: RIESGO DE SOCAVÓN INMINENTE EN CORREDOR OTAY
+El algoritmo asignó prioridad máxima de emergencia para evitar el colapso vial."
+align = 1
+valign = 1
+
+[node name="ViewMunicipio" type="Control" parent="Views"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="Panel" parent="Views/ViewMunicipio"]
+anchor_right = 1.0
+margin_bottom = 44.0
+
+[node name="BtnVolver2" type="Button" parent="Views/ViewMunicipio/TopBar"]
+margin_left = 12.0
+margin_top = 6.0
+margin_right = 180.0
+margin_bottom = 38.0
+text = "← VOLVER AL MENÚ"
+
+[node name="Title" type="Label" parent="Views/ViewMunicipio/TopBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 200.0
+text = "CENTRO DE MANDO MUNICIPAL: COLA DE PRIORIDAD (MAX-HEAP O(log n))"
+valign = 1
+
+[node name="HBox" type="HBoxContainer" parent="Views/ViewMunicipio"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 56.0
+margin_right = -16.0
+margin_bottom = -16.0
+custom_constants/separation = 16
+
+[node name="PanelLista" type="Panel" parent="Views/ViewMunicipio/HBox"]
+margin_right = 456.0
+margin_bottom = 468.0
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="Views/ViewMunicipio/HBox/PanelLista"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 12.0
+margin_top = 12.0
+margin_right = -12.0
+margin_bottom = -12.0
+custom_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Views/ViewMunicipio/HBox/PanelLista/VBox"]
+margin_right = 432.0
+margin_bottom = 14.0
+text = "RANKING DE ATENCIÓN TÉCNICA (MAYOR RIESGO AL FRENTE)"
+
+[node name="Scroll" type="ScrollContainer" parent="Views/ViewMunicipio/HBox/PanelLista/VBox"]
+margin_top = 22.0
+margin_right = 432.0
+margin_bottom = 444.0
+size_flags_vertical = 3
+
+[node name="ListaItems" type="VBoxContainer" parent="Views/ViewMunicipio/HBox/PanelLista/VBox/Scroll"]
+margin_right = 432.0
+size_flags_horizontal = 3
+custom_constants/separation = 4
+
+[node name="PanelDetalle" type="Panel" parent="Views/ViewMunicipio/HBox"]
+margin_left = 472.0
+margin_right = 928.0
+margin_bottom = 468.0
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="Views/ViewMunicipio/HBox/PanelDetalle"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 14.0
+margin_top = 12.0
+margin_right = -14.0
+margin_bottom = -12.0
+custom_constants/separation = 10
+
+[node name="LblStats" type="Label" parent="Views/ViewMunicipio/HBox/PanelDetalle/VBox"]
+margin_right = 428.0
+margin_bottom = 31.0
+text = "Zona A: 2,000 reportes | Zona B: 5 reportes"
+
+[node name="LblDetalleBache" type="Label" parent="Views/ViewMunicipio/HBox/PanelDetalle/VBox"]
+margin_top = 41.0
+margin_right = 428.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 0, 160 )
+text = "Selecciona un bache de la lista para ver su análisis de riesgo..."
+autowrap = true
+
+[node name="BtnDespachar" type="Button" parent="Views/ViewMunicipio/HBox/PanelDetalle/VBox"]
+margin_top = 230.0
+margin_right = 428.0
+margin_bottom = 278.0
+rect_min_size = Vector2( 0, 48 )
+text = "🚛 DESPACHAR BRIGADA NOCTURNA AL #1"
+
+[node name="BtnSyncFlask" type="Button" parent="Views/ViewMunicipio/HBox/PanelDetalle/VBox"]
+margin_top = 288.0
+margin_right = 428.0
+margin_bottom = 328.0
+rect_min_size = Vector2( 0, 40 )
+text = "🔄 SINCRONIZAR CON BASE DE DATOS SQLITE"
+
+[node name="ViewEstadisticas" type="Control" parent="Views"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="Panel" parent="Views/ViewEstadisticas"]
+anchor_right = 1.0
+margin_bottom = 44.0
+
+[node name="BtnVolver3" type="Button" parent="Views/ViewEstadisticas/TopBar"]
+margin_left = 12.0
+margin_top = 6.0
+margin_right = 180.0
+margin_bottom = 38.0
+text = "← VOLVER AL MENÚ"
+
+[node name="Title" type="Label" parent="Views/ViewEstadisticas/TopBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 200.0
+text = "ANÁLISIS COMPARATIVO SISTÉMICO: ZONA A VS. ZONA B"
+valign = 1
+
+[node name="HBox" type="HBoxContainer" parent="Views/ViewEstadisticas"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 20.0
+margin_top = 60.0
+margin_right = -20.0
+margin_bottom = -20.0
+custom_constants/separation = 20
+
+[node name="PanelZonaA" type="Panel" parent="Views/ViewEstadisticas/HBox"]
+margin_right = 450.0
+margin_bottom = 460.0
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="Views/ViewEstadisticas/HBox/PanelZonaA"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = -16.0
+custom_constants/separation = 8
+
+[node name="Titulo" type="Label" parent="Views/ViewEstadisticas/HBox/PanelZonaA/VBox"]
+margin_right = 418.0
+margin_bottom = 14.0
+text = "ZONA A: EL RECLAMO HISTÓRICO"
+
+[node name="Desc" type="Label" parent="Views/ViewEstadisticas/HBox/PanelZonaA/VBox"]
+margin_top = 22.0
+margin_right = 418.0
+margin_bottom = 400.0
+size_flags_vertical = 3
+text = "• Ubicación: Avenida Paseo Ensenada (Playas de Tijuana)
+• Volumen: 2,000 reportes ciudadanos (6 meses)
+• Tipo de Deterioro: Superficial estable (baches de 3 a 5 cm)
+• Aforo Pesado: 10% (vehículos locales y particulares)
+• Riesgo de Socavón: 2% (Subsuelo consolidado y seco)
+• IPU Promedio Calculado: 22.6 / 100
+• Presión Social: Alta (amenaza de bloqueos vecinales)
+• Costo de Reparación: $3,500 MXN por bache
+
+DIAGNÓSTICO DEL CIENTÍFICO DE DATOS:
+Atender esta zona por 'orden de llegada' satisface la presión política inmediata pero desperdicia el presupuesto de emergencia en daños estables que no amenazan la vida ni la economía."
+autowrap = true
+
+[node name="PanelZonaB" type="Panel" parent="Views/ViewEstadisticas/HBox"]
+margin_left = 470.0
+margin_right = 920.0
+margin_bottom = 460.0
+size_flags_horizontal = 3
+
+[node name="VBox" type="VBoxContainer" parent="Views/ViewEstadisticas/HBox/PanelZonaB"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = -16.0
+custom_constants/separation = 8
+
+[node name="Titulo" type="Label" parent="Views/ViewEstadisticas/HBox/PanelZonaB/VBox"]
+margin_right = 418.0
+margin_bottom = 14.0
+text = "ZONA B: EL RIESGO SISTÉMICO INVISIBLE"
+
+[node name="Desc" type="Label" parent="Views/ViewEstadisticas/HBox/PanelZonaB/VBox"]
+margin_top = 22.0
+margin_right = 418.0
+margin_bottom = 400.0
+size_flags_vertical = 3
+text = "• Ubicación: Bulevar Bellas Artes (Ciudad Industrial Otay)
+• Volumen: Solo 5 reportes ciudadanos recientes
+• Tipo de Deterioro: Hundimiento leve con fractura oculta
+• Aforo Pesado: 95% (tráileres de carga maquiladora)
+• Riesgo de Socavón: 98% (tubería sanitaria colapsada)
+• IPU Crítico Calculado: 98.3 / 100
+• Costo Preventivo Inmediato: $15,000 MXN
+• Costo si ocurre Colapso: $450,000 MXN (Factor 30x)
+
+DECISIÓN PÚBLICA BASADA EN EVIDENCIA:
+El algoritmo de Max-Heap coloca esta zona en la prioridad #1 absoluta. La intervención preventiva salva vidas, evita el desabasto industrial fronterizo y ahorra 30 veces el presupuesto público bajo la NIF C-9."
+autowrap = true
+
+[node name="ViewMetodologia" type="Control" parent="Views"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TopBar" type="Panel" parent="Views/ViewMetodologia"]
+anchor_right = 1.0
+margin_bottom = 44.0
+
+[node name="BtnVolver4" type="Button" parent="Views/ViewMetodologia/TopBar"]
+margin_left = 12.0
+margin_top = 6.0
+margin_right = 180.0
+margin_bottom = 38.0
+text = "← VOLVER AL MENÚ"
+
+[node name="Title" type="Label" parent="Views/ViewMetodologia/TopBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 200.0
+text = "SUSTENTACIÓN TEÓRICA: PENSAMIENTO COMPLEJO, TOULMIN Y NIF C-9"
+valign = 1
+
+[node name="PanelMetodo" type="Panel" parent="Views/ViewMetodologia"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -440.0
+margin_top = -205.0
+margin_right = 440.0
+margin_bottom = 245.0
+
+[node name="Scroll" type="ScrollContainer" parent="Views/ViewMetodologia/PanelMetodo"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0
+margin_top = 16.0
+margin_right = -16.0
+margin_bottom = -16.0
+
+[node name="TextContent" type="Label" parent="Views/ViewMetodologia/PanelMetodo/Scroll"]
+margin_right = 848.0
+margin_bottom = 540.0
+size_flags_horizontal = 3
+text = "1. PENSAMIENTO COMPLEJO (EDGAR MORIN & DONELLA MEADOWS)
+La ciudad no es una suma lineal de baches aislados, sino un Sistema Social Complejo interconectado. La Zona B actúa como un 'Punto de Apalancamiento': su falla no es solo un bache, sino la detonación de una reacción en cadena (desabasto en la Garita de Otay, daño al drenaje pluvial, suspensión de agua potable y colapso de vías alternas).
+
+2. DETECCIÓN DE FALACIAS EN EL RECLAMO VECINAL (ZONA A)
+• Falacia ad antiquitatem (Apelación a la tradición): 'Siempre se ha atendido por turno de llegada, por lo tanto debe respetarse nuestro turno'. Confunde la rutina burocrática con la justicia distributiva.
+• Falacia de Falsa Causalidad: 'Nuestra calle tiene más llamadas, por lo tanto tiene más riesgo'. El número de reportes solo mide la conectividad digital y el tiempo de los vecinos, no el riesgo geofísico real.
+
+3. MODELO ARGUMENTATIVO DE STEPHEN TOULMIN
+• Aserción: La cuadrilla nocturna debe intervenir con máxima prioridad la Zona B.
+• Datos / Evidencia: 5 reportes con aforo de 12,000 camiones diarios y alerta geotécnica de socavón inminente.
+• Garantía: La prevención del colapso de la red urbana debe prevalecer sobre la reparación de deterioros superficiales.
+• Respaldo: Estudio econométrico de Fuentes y Hernández (2009, COLEF) sobre siniestralidad en Tijuana y estadísticas de INEGI-ATUS.
+• Cualificador Modal: Necesariamente y con alto grado de certidumbre probabilística.
+
+4. CONTABILIDAD FINANCIERA (NIF C-9: PASIVOS CONTINGENTES)
+Un socavón en corredor industrial no reparado a tiempo multiplica el costo directo por 30 y genera demandas patrimoniales contra el municipio por daños a vehículos pesados y pérdidas logísticas en la aduana de Tijuana."
+autowrap = true
+
+[node name="Modals" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="ModalCreditos" type="Panel" parent="Modals"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -380.0
+margin_top = -220.0
+margin_right = 380.0
+margin_bottom = 220.0
+
+[node name="VBox" type="VBoxContainer" parent="Modals/ModalCreditos"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 24.0
+margin_top = 20.0
+margin_right = -24.0
+margin_bottom = -20.0
+custom_constants/separation = 12
+
+[node name="Title" type="Label" parent="Modals/ModalCreditos/VBox"]
+margin_right = 712.0
+margin_bottom = 14.0
+text = "👥 REPOSITORIO COMUNITARIO PARA TRABAJO EN EQUIPO"
+align = 1
+
+[node name="Info" type="Label" parent="Modals/ModalCreditos/VBox"]
+margin_top = 26.0
+margin_right = 712.0
+margin_bottom = 280.0
+size_flags_vertical = 3
+text = "UNIVERSIDAD NACIONAL ROSARIO CASTELLANOS (UNRC) - SEDE TIJUANA
+Licenciatura en Ciencias de Datos para Negocios (LCDN Grupo 301) | Ciclo Escolar 2026-2
+
+• AUTOR Y DESARROLLADOR PRINCIPAL:
+  Luis Armando Triche Ramírez (Matrícula: 25251667-2)
+
+• DOCENTE TITULAR DE LA UCA:
+  Mtra. Deysy Margarita Tovar Hernández
+
+• ESPECIFICACIONES TÉCNICAS DEL PROYECTO:
+  - Arquitectura Nativa: 32-Bit ARMv7 (Android APK) y PC x86_64 / x86 (GLES2)
+  - Motor de Datos: Base de Datos Relacional SQLite en 3FN (Principio LGPDPPSO)
+  - Estructuras Avanzadas: Tabla Hash Espacial O(1) + Max-Heap de Prioridad O(log n)
+  - API Web Serverless: Python Flask compatible con despliegue en Vercel
+  - Conexión Remota: Soporte Scrcpy para proyección en vivo en Google Meet / Classroom
+
+• REPOSITORIO GIT COMUNITARIO:
+  Directorio Local: /home/triche777/Bacheo_Inteligente_Tijuana_Repo"
+autowrap = true
+
+[node name="BtnCerrarCreditos" type="Button" parent="Modals/ModalCreditos/VBox"]
+margin_top = 292.0
+margin_right = 712.0
+margin_bottom = 340.0
+rect_min_size = Vector2( 0, 48 )
+text = "CERRAR VENTANA"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[connection signal="pressed" from="Views/ViewPortada/Center/MenuButtons/BtnNavCiudadano" to="." method="_on_BtnNavCiudadano_pressed"]
+[connection signal="pressed" from="Views/ViewPortada/Center/MenuButtons/BtnNavMunicipio" to="." method="_on_BtnNavMunicipio_pressed"]
+[connection signal="pressed" from="Views/ViewPortada/Center/MenuButtons/BtnNavEstadisticas" to="." method="_on_BtnNavEstadisticas_pressed"]
+[connection signal="pressed" from="Views/ViewPortada/Center/MenuButtons/BtnNavMetodologia" to="." method="_on_BtnNavMetodologia_pressed"]
+[connection signal="pressed" from="Views/ViewPortada/Center/MenuButtons/BtnNavCreditos" to="." method="_on_BtnNavCreditos_pressed"]
+[connection signal="pressed" from="Views/ViewPortada/Center/MenuButtons/BtnSalir" to="." method="_on_BtnSalir_pressed"]
+[connection signal="pressed" from="Views/ViewCiudadano/TopBar/BtnVolver1" to="." method="_on_BtnVolverMenu_pressed"]
+[connection signal="pressed" from="Views/ViewCiudadano/Card/VBox/BtnEnviarReporte" to="." method="_on_BtnEnviarReporte_pressed"]
+[connection signal="pressed" from="Views/ViewMunicipio/TopBar/BtnVolver2" to="." method="_on_BtnVolverMenu_pressed"]
+[connection signal="pressed" from="Views/ViewMunicipio/HBox/PanelDetalle/VBox/BtnDespachar" to="." method="_on_BtnDespachar_pressed"]
+[connection signal="pressed" from="Views/ViewMunicipio/HBox/PanelDetalle/VBox/BtnSyncFlask" to="." method="_on_BtnSyncFlask_pressed"]
+[connection signal="pressed" from="Views/ViewEstadisticas/TopBar/BtnVolver3" to="." method="_on_BtnVolverMenu_pressed"]
+[connection signal="pressed" from="Views/ViewMetodologia/TopBar/BtnVolver4" to="." method="_on_BtnVolverMenu_pressed"]
+[connection signal="pressed" from="Modals/ModalCreditos/VBox/BtnCerrarCreditos" to="." method="_on_BtnCerrarCreditos_pressed"]
