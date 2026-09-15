@@ -89,7 +89,7 @@ func _mostrar_vista(nombre_vista):
 # NAVEGACIÓN
 func _on_BtnNavCiudadano_pressed():
 	_play_click()
-	_mostrar_vista("ciudadano")
+	OS.shell_open("https://bacheo-inteligente-tijuana.vercel.app")
 
 func _on_BtnNavMunicipio_pressed():
 	_play_click()
