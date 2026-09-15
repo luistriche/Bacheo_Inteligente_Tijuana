@@ -43,6 +43,7 @@ var bache_seleccionado = null
 var tts_player = AudioStreamPlayer.new()
 
 func _ready():
+	_aplicar_psicologia_color()
 	if OS.get_name() == "Android":
 		OS.request_permissions()
 	_setup_options()
@@ -310,3 +311,44 @@ func _on_http_completed(result, response_code, headers, body):
 			lbl_stats.text = "✓ Sincronizado exitosamente con SQLite y Flask (2,005 reportes procesados)."
 	else:
 		lbl_stats.text = "Modo autónomo local activo (Sin conexión con servidor web)."
+
+
+func _aplicar_psicologia_color():
+	var header = $Views/ViewPortada.get_node_or_null("HeaderBox")
+	if header:
+		header.get_node("Institucion").text = "AYUNTAMIENTO DE TIJUANA"
+		header.get_node("Titulo").text = "BACHEO INTELIGENTE"
+		header.get_node("Subtitulo").text = "Reporta baches en tu colonia de forma facil y rapida"
+		header.get_node("Autor").text = ""
+		header.get_node("BadgeCompat").text = ""
+	
+	var style_normal = StyleBoxFlat.new()
+	style_normal.bg_color = Color("#0ea5e9")
+	style_normal.corner_radius_top_left = 20
+	style_normal.corner_radius_top_right = 20
+	style_normal.corner_radius_bottom_left = 20
+	style_normal.corner_radius_bottom_right = 20
+	
+	var style_hover = style_normal.duplicate()
+	style_hover.bg_color = Color("#0284c7")
+	
+	var style_danger = style_normal.duplicate()
+	style_danger.bg_color = Color("#ef4444")
+	
+	var btns = $Views/ViewPortada/Center/MenuButtons.get_children()
+	for btn in btns:
+		if btn is Button:
+			btn.add_stylebox_override("normal", style_normal)
+			btn.add_stylebox_override("hover", style_hover)
+			btn.add_stylebox_override("pressed", style_hover)
+			btn.rect_min_size.y = 60
+			
+			if btn.name == "BtnNavCiudadano":
+				btn.text = "📷 Reportar un Bache Nuevo"
+			elif btn.name == "BtnNavMunicipio":
+				btn.text = "🗺️ Ver Mapa y Prioridades"
+			elif btn.name == "BtnSalir":
+				btn.add_stylebox_override("normal", style_danger)
+				btn.text = "❌ Salir de la App"
+			else:
+				btn.visible = false
