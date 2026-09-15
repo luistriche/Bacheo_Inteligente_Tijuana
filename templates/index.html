@@ -339,12 +339,21 @@
                     Captura una foto directa del asfalto o bache. La Inteligencia Artificial analizará en tiempo real la profundidad, el patrón de fisura y el riesgo de socavón estructural.
                 </p>
 
-                <!-- Input nativo de cámara para Android / iOS / PC -->
-                <input type="file" id="fotoInput" accept="image/*"  style="display: none;" onchange="handleImageSelection(event)">
+                <!-- Inputs separados -->
+                <input type="file" id="fotoCamara" accept="image/*" capture="environment" style="display: none;" onchange="handleImageSelection(event)">
+                <input type="file" id="fotoGaleria" accept="image/*" style="display: none;" onchange="handleImageSelection(event)">
 
-                <button class="btn-capture" onclick="document.getElementById('fotoInput').click()">
-                    📷 Tomar Foto / Subir Imagen
-                </button>
+                <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 10px;">
+                    <button type="button" style="flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; color: white; background-color: #ef4444; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onclick="document.getElementById('fotoCamara').click()">
+                        <span style="font-size: 1.5rem; margin-bottom: 5px;">📷</span>
+                        TOMAR FOTO
+                    </button>
+                    
+                    <button type="button" style="flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; color: white; background-color: #3b82f6; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onclick="document.getElementById('fotoGaleria').click()">
+                        <span style="font-size: 1.5rem; margin-bottom: 5px;">📁</span>
+                        SUBIR GALERÍA
+                    </button>
+                </div>
 
                 <div class="preview-box" id="previewContainer">
                     <img id="imgPreview" alt="Vista previa del bache">
