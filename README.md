@@ -21,27 +21,27 @@ El sistema sustituye el modelo reactivo tradicional (*atender quejas en estricto
 * **Arquitectura de Procesador:** Compatible nativamente con dispositivos **Android de 32 Bits (`armeabi-v7a`)** y de 64 Bits (`arm64-v8a`).
 * **Gráficos:** Renderizador **OpenGL ES 2.0 (GLES2)** para funcionamiento universal sin crasheos en cualquier teléfono (ej. OPPO A38) o computadora.
 * **Plataformas Soportadas:** 
-  * 📱 **Android:** APK firmado e instalable directamente (`builds/Bacheo_Tijuana_32Bit.apk`).
-  * 🖥️ **PC Linux:** Binarios ejecutables de 32 bits y 64 bits (`builds/Bacheo_Tijuana_PC*`).
-  * 🌐 **Web / Serverless:** Servidor Flask preparado para despliegue en la nube vía **Vercel** (`vercel.json`).
+  * 📱 **Android:** APK firmado e instalable directamente (se distribuye aparte; no se versiona por tamaño).
+  * 🖥️ **PC Linux:** Binarios ejecutables de 32 bits y 64 bits (se distribuyen aparte).
+  * 🌐 **Web / Serverless:** Flask desplegado en **Vercel** (`vercel.json`). **Demo en vivo:** https://bacheo-inteligente-tijuana.vercel.app
 
 ---
 
 ## 🏛️ Estructura del Repositorio
 
 ```text
-├── app_godot_32bit/        # Código fuente del cliente gráfico nativo (Godot Engine 3.5 LTS)
+├── app.py                  # API Flask: reporte ciudadano, centro de mando y webhook Telegram
+├── structures.py           # Tabla Hash Espacial O(1), Max-Heap O(log n) y clasificador Gemini
+├── config.py               # Llaves leídas de variables de entorno (nunca en el código)
+├── schema.sql              # Esquema relacional en 3FN (cumplimiento LGPDPPSO / INAI)
+├── build_database.py       # Constructor de la base de datos semilla de Tijuana
+├── templates/index.html    # Interfaz web: reporte con IA + mapa Leaflet y cola de prioridad
+├── tests/                  # Pruebas automatizadas (pytest)
+├── .github/workflows/ci.yml# Integración continua (ruff + pytest)
+├── app_godot_32bit/        # Cliente gráfico nativo (Godot Engine 3.5 LTS, 32 bits)
 │   ├── assets/             # Texturas, logotipos de Tijuana y efectos de audio
-│   ├── scenes/MainApp.tscn # Escena maestra con portada estilo AAA y navegación táctil
+│   ├── scenes/MainApp.tscn # Escena maestra con navegación táctil
 │   └── scripts/MainApp.gd  # Lógica de conexión HTTP y cálculo local del IPU
-├── backend_python_api/     # Servidor REST y Algoritmos de Ciencia de Datos
-│   ├── app.py              # API Flask y controlador de peticiones
-│   ├── structures.py       # Tabla Hash Espacial O(1) y Cola de Prioridad Max-Heap O(log n)
-│   ├── schema.sql          # Esquema relacional en 3FN (cumplimiento LGPDPPSO / INAI)
-│   └── build_database.py   # Constructor de la base de datos de Tijuana
-├── builds/                 # Paquetes listos para distribución e instalación
-│   ├── Bacheo_Tijuana_32Bit.apk # APK para celulares Android (13 MB)
-│   └── Bacheo_Tijuana_PC.x86_64 # Ejecutable directo para Linux PC
 └── docs/                   # Justificación metodológica, citas APA 7.ª ed. y Modelo Toulmin
 ```
 
@@ -62,22 +62,34 @@ $$\text{IPU} = (\text{Severidad Visual} \times 0.30) + (\text{Riesgo Socavón} \
 
 ### 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/triche777/bacheo-inteligente-tijuana.git
-cd bacheo-inteligente-tijuana
+git clone https://github.com/luistriche/Bacheo_Inteligente_Tijuana.git
+cd Bacheo_Inteligente_Tijuana
 ```
 
-### 2. Instalar y ejecutar el Backend en Python:
+### 2. Configurar las llaves (van en variables de entorno, no en el código):
 ```bash
-cd backend_python_api
-pip install -r requirements.txt
-python build_database.py   # Inicializa SQLite con las rutas de Tijuana
-python app.py              # Inicia la API local en http://127.0.0.1:5000
+cp .env.example .env
+# Edita .env y coloca tu GEMINI_API_KEY y TELEGRAM_TOKEN reales
 ```
 
-### 3. Abrir la App en PC o Proyectar en Pantalla con Scrcpy:
-* **En PC:** Ejecuta `./builds/Bacheo_Tijuana_PC.x86_64`
-* **En Android:** Instala el archivo `builds/Bacheo_Tijuana_32Bit.apk` en tu teléfono.
-* **Proyección en Google Meet / Classroom:** Conecta tu celular con depuración USB y ejecuta:
+### 3. Ejecutar el servidor Flask:
+```bash
+pip install -r requirements.txt
+python build_database.py   # Genera SQLite con la semilla de Tijuana
+python app.py              # Servidor local en http://127.0.0.1:5000
+```
+
+### 4. Pruebas automatizadas y calidad:
+```bash
+pip install -r requirements-dev.txt
+pytest -q        # Pruebas del motor IPU, hash espacial y clasificador
+ruff check .     # Análisis estático (linter)
+```
+
+### 5. App nativa (Godot) y proyección en clase:
+* **Android:** instala `Bacheo_Tijuana_32Bit.apk` (se distribuye aparte; el `.apk` no se versiona por tamaño).
+* **PC Linux:** ejecuta el binario `Bacheo_Tijuana_PC.x86_64`.
+* **Proyección en Google Meet / Classroom:** conecta tu celular con depuración USB y ejecuta:
   ```bash
   scrcpy --window-title "Bacheo Inteligente - Luis Triche"
   ```
