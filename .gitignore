@@ -3,6 +3,21 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.sqlite-journal
+.pytest_cache/
+
+# Secretos
+.env
+
+# Base de datos local (se regenera con build_database.py)
+*.db
+
+# Binarios de build (usan GitHub Releases)
+builds/
+app_godot_32bit/build/
+*.apk
+*.apk.idsig
+*.x86_64
+*.pck
 
 # Godot
 .import/

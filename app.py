@@ -6,16 +6,17 @@ Estudiante: Luis Armando Triche Ramírez
 """
 
 import os
+import shutil
 import sqlite3
 import random
-import uuid
-from flask import Flask, render_template, request, jsonify, send_from_directory
-from structures import SpatialHashTable, PriorityQueueHeap, ElementoBacheHeap, PotholeVisionClassifier
+import requests
+from flask import Flask, render_template, request, jsonify
+from config import TELEGRAM_TOKEN, TELEGRAM_SECRET
+from structures import SpatialHashTable, PriorityQueueHeap, ElementoBacheHeap, PotholeVisionClassifier, generar_folio
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'bacheo_tijuana.db')
 
-import shutil
 if os.environ.get('VERCEL'):
     TMP_DB_PATH = '/tmp/bacheo_tijuana.db'
     if not os.path.exists(TMP_DB_PATH):
@@ -117,19 +118,15 @@ def api_reportar():
             id_vialidad = int(vialidad_input)
             cursor.execute("SELECT nombre_vialidad, tipo_vialidad, aforo_promedio_diario FROM Vialidades WHERE id_vialidad = ?", (id_vialidad,))
             v_info = cursor.fetchone()
-            if not v_info: raise ValueError()
-        except:
+            if not v_info:
+                raise ValueError()
+        except Exception:
             nombre_custom = str(vialidad_input)[:50]
             cursor.execute("INSERT INTO Vialidades (nombre_vialidad, tipo_vialidad, delegacion, aforo_promedio_diario) VALUES (?, 'Residencial / Local', 'Centro', 5000)", (nombre_custom,))
             id_vialidad = cursor.lastrowid
             v_info = {'nombre_vialidad': nombre_custom, 'tipo_vialidad': 'Residencial / Local', 'aforo_promedio_diario': 5000}
 
-        
-        # 2. Consultar características de la vialidad
-        conn = get_db()
-        cursor = conn.cursor()
-
-        
+        # 2. Características de la vialidad (misma conexión: la personalizada inserta sin commitear)
         es_industrial = "Industrial" in v_info['tipo_vialidad'] or "Bellas Artes" in v_info['nombre_vialidad']
         aforo_pesado = 0.95 if es_industrial else (0.4 if v_info['aforo_promedio_diario'] > 40000 else 0.15)
         
@@ -142,7 +139,7 @@ def api_reportar():
         )
         
         # 4. Desduplicación Espacial con Tabla Hash
-        folio_temporal = f"TIJ-{uuid.uuid4().hex[:6].upper()}"
+        folio_temporal = generar_folio()
         # TRUCO PARA LA PRESENTACION: Agregar ruido microscópico al GPS para que siempre sea "Nuevo" si así lo desean, 
         # o manejar el duplicado. Vamos a manejar el duplicado bien.
         hash_res = hash_table_spatial.search_or_insert(latitud, longitud, folio_temporal)
@@ -154,6 +151,7 @@ def api_reportar():
             cursor.execute("SELECT * FROM Reportes_Baches WHERE folio_ciudadano = ?", (folio_final,))
             existente = cursor.fetchone()
             if existente:
+                conn.close()
                 return jsonify({
                     'exito': True,
                     'folio': folio_final,
@@ -164,6 +162,7 @@ def api_reportar():
                     'alerta_socavon': existente['indice_riesgo_socavon'] > 0.5,
                     'estado_hash': 'Duplicado (Mismo GPS)'
                 })
+            folio_final = generar_folio()
         
         # 5. Inserción en Base de Datos Relacional
         cursor.execute("""
@@ -245,19 +244,18 @@ def api_baches_mapa():
     
     return jsonify({'puntos': puntos})
 
-import requests
-
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "BOT_NO_CONFIGURADO")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 
 def send_telegram_message(chat_id, text):
     try:
         requests.post(f"{TELEGRAM_API_URL}/sendMessage", json={"chat_id": chat_id, "text": text})
-    except:
+    except Exception:
         pass
 
 @app.route('/api/telegram', methods=['POST'])
 def telegram_webhook():
+    if TELEGRAM_SECRET and request.headers.get('X-Telegram-Bot-Api-Secret-Token') != TELEGRAM_SECRET:
+        return jsonify({'status': 'forbidden'}), 403
     try:
         data = request.json
         if not data or 'message' not in data:
@@ -277,7 +275,7 @@ def telegram_webhook():
             cursor.execute("SELECT nombre_vialidad, tipo_vialidad, aforo_promedio_diario FROM Vialidades WHERE id_vialidad = 1")
             v_info = cursor.fetchone()
             
-            folio_temporal = f"TIJ-TG-{uuid.uuid4().hex[:6].upper()}"
+            folio_temporal = generar_folio("TIJ-TG")
             hash_res = hash_table_spatial.search_or_insert(lat, lon, folio_temporal)
             folio_final = hash_res['folio_original']
             

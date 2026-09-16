@@ -14,10 +14,19 @@ from datetime import datetime, timedelta
 from structures import calcular_ipu
 import csv
 
-BASE_DIR = '/home/triche777/Bacheo_Inteligente_Tijuana_Repo'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'bacheo_tijuana.db')
 SCHEMA_PATH = os.path.join(BASE_DIR, 'schema.sql')
-CSV_RUTAS = '/home/triche777/Descargas/Codigo/rutas-transporte-tijuana.csv'
+CSV_RUTAS = os.environ.get('CSV_RUTAS', '/home/triche777/Descargas/Codigo/rutas-transporte-tijuana.csv')
+
+
+def _to_float(value, default):
+    try:
+        if value is None or str(value).strip() == '':
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
 
 def init_db():
     print(f"[*] Creando base de datos en: {DB_PATH}")
@@ -56,25 +65,25 @@ def populate_rutas(conn):
         print("    [!] Archivo CSV de rutas no encontrado, saltando...")
         return
         
-    df = pd.read_csv(CSV_RUTAS)
     cursor = conn.cursor()
     inserted = 0
-    for _, row in df.iterrows():
-        nombre = str(row.get('Nombre de Ruta', 'Ruta')).strip()
-        tipo = str(row.get('Tipo', 'Autobús')).strip()
-        salida = str(row.get('Salida', 'Tijuana')).strip()
-        llegada = str(row.get('Llegada', 'Tijuana')).strip()
-        dist = float(row['Distancia (km)']) if pd.notna(row.get('Distancia (km)')) else 15.0
-        lat_s = float(row['Lat Salida']) if pd.notna(row.get('Lat Salida')) else 32.5149
-        lng_s = float(row['Lng Salida']) if pd.notna(row.get('Lng Salida')) else -117.0382
-        lat_l = float(row['Lat Llegada']) if pd.notna(row.get('Lat Llegada')) else 32.5346
-        lng_l = float(row['Lng Llegada']) if pd.notna(row.get('Lng Llegada')) else -117.0384
-        
-        cursor.execute("""
-            INSERT INTO Rutas_Transporte (nombre_ruta, tipo_unidad, salida, llegada, distancia_km, lat_salida, lng_salida, lat_llegada, lng_llegada)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (nombre, tipo, salida, llegada, dist, lat_s, lng_s, lat_l, lng_l))
-        inserted += 1
+    with open(CSV_RUTAS, 'r', encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            nombre = str(row.get('Nombre de Ruta') or 'Ruta').strip()
+            tipo = str(row.get('Tipo') or 'Autobús').strip()
+            salida = str(row.get('Salida') or 'Tijuana').strip()
+            llegada = str(row.get('Llegada') or 'Tijuana').strip()
+            dist = _to_float(row.get('Distancia (km)'), 15.0)
+            lat_s = _to_float(row.get('Lat Salida'), 32.5149)
+            lng_s = _to_float(row.get('Lng Salida'), -117.0382)
+            lat_l = _to_float(row.get('Lat Llegada'), 32.5346)
+            lng_l = _to_float(row.get('Lng Llegada'), -117.0384)
+
+            cursor.execute("""
+                INSERT INTO Rutas_Transporte (nombre_ruta, tipo_unidad, salida, llegada, distancia_km, lat_salida, lng_salida, lat_llegada, lng_llegada)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (nombre, tipo, salida, llegada, dist, lat_s, lng_s, lat_l, lng_l))
+            inserted += 1
     conn.commit()
     print(f"    -> {inserted} rutas de transporte público cargadas exitosamente.")
 

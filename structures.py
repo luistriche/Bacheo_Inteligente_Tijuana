@@ -5,10 +5,20 @@ UCA: Estructuras de Datos y Ciencia de Datos para Negocios
 Estudiante: Luis Armando Triche Ramírez
 """
 
+import base64
+import json
 import math
 import heapq
-from PIL import Image, ImageStat, ImageFilter
 import io
+import uuid
+import requests
+from PIL import Image
+from config import GEMINI_API_KEY
+
+
+def generar_folio(prefijo="TIJ"):
+    """Folio ciudadano único. Usa UUID para evitar colisiones con la columna UNIQUE."""
+    return f"{prefijo}-{uuid.uuid4().hex[:6].upper()}"
 
 # ==============================================================================
 # 1. TABLA HASH ESPACIAL (Deduplicación e Indexación Eficiente en O(1))
@@ -123,11 +133,6 @@ class PriorityQueueHeap:
 # ==============================================================================
 # 3. CLASIFICADOR DE VISIÓN COMPUTACIONAL (Análisis de Imagen para Urgencia)
 # ==============================================================================
-import base64
-import requests
-import json
-import math
-
 def calcular_ipu(severidad, riesgo_socavon, aforo_pesado, afecta_tp):
     """
     Fórmula Académica del Índice de Prioridad Urbana (IPU) ponderado (0 a 100)
@@ -146,48 +151,61 @@ def calcular_ipu(severidad, riesgo_socavon, aforo_pesado, afecta_tp):
     
     return round(severidad_norm + riesgo_norm + aforo_norm + tp_norm, 2)
 
-import random
-import math
-
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 
 class PotholeVisionClassifier:
     @staticmethod
     def classify_image(image_bytes, es_zona_industrial=False, aforo_pesado=0.0, es_ruta_tp=False):
-        # Valores por defecto en caso de fallo
-        nivel_severidad = random.randint(3, 5) if es_zona_industrial else random.randint(2, 4)
-        profundidad = "Desconocida"
-        densidad_fisuras = random.randint(40, 80)
-        
-        # Integración con Google Gemini 1.5 Flash (Vision) mediante REST (Sin librerías pesadas)
-        ia_disponible = True
+        # Por defecto: sin IA disponible, requiere inspección manual (nunca inventar datos)
+        nivel_severidad = 1
+        profundidad = "Pendiente Inspección"
+        densidad_fisuras = 0
+        ia_disponible = False
+
+        # Integración con Google Gemini (Vision) mediante REST (sin librerías pesadas)
         try:
             if not GEMINI_API_KEY:
-                raise ValueError("API Key no configurada")
-                
+                raise ValueError("GEMINI_API_KEY no configurada en el entorno")
+            if not image_bytes or len(image_bytes) < 100:
+                raise ValueError("Imagen vacía o demasiado pequeña")
+
+            try:
+                fmt = (Image.open(io.BytesIO(image_bytes)).format or "JPEG").upper()
+            except Exception:
+                fmt = "JPEG"
+            mime = {"JPG": "image/jpeg", "JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}.get(fmt, "image/jpeg")
+
+            img_b64 = base64.b64encode(image_bytes).decode('utf-8')
+            payload = {
+                "contents": [{
+                    "parts": [
+                        {"text": "Eres un ingeniero civil experto en pavimentos. Analiza esta imagen de la calle. Responde ESTRICTAMENTE en formato JSON con estas claves: 'severidad' (entero 1 a 5, siendo 5 muy destructivo), 'profundidad' (string, ej: '15 cm'), 'fisuras' (entero 0 a 100, porcentaje de daño alrededor). Si no es un bache claro, asume severidad 1."},
+                        {"inline_data": {"mime_type": mime, "data": img_b64}}
+                    ]
+                }],
+                "generationConfig": {"temperature": 0.1}
+            }
+
             response = requests.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}",
+                f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}",
                 headers={'Content-Type': 'application/json'},
                 json=payload,
-                timeout=10
+                timeout=15
             )
             response.raise_for_status()
             res_data = response.json()
-            
+
             raw_text = res_data['candidates'][0]['content']['parts'][0]['text']
             raw_text = raw_text.replace('```json', '').replace('```', '').strip()
             json_res = json.loads(raw_text)
-            
-            nivel_severidad = int(json_res.get('nivel_severidad', 1))
-            profundidad = json_res.get('profundidad_estimada', 'Desconocida')
-            densidad_fisuras = int(json_res.get('densidad_fisuras_porcentaje', 10))
-            
+
+            nivel_severidad = int(json_res.get('severidad', 1))
+            profundidad = str(json_res.get('profundidad', 'Desconocida'))
+            densidad_fisuras = int(json_res.get('fisuras', 0))
+            ia_disponible = True
+
         except Exception as e:
-            print("⚠️ Error en IA o API Key faltante. Activando modo Manual/Heurístico:", e)
-            ia_disponible = False
-            nivel_severidad = 1 # Requiere inspección visual
-            profundidad = 'Pendiente Inspección'
-            densidad_fisuras = 0
+            print("⚠️ IA no disponible, se requiere inspección manual:", e)
 
         # Cálculo matemático original de Riesgo
         factor_zona = 1.8 if es_zona_industrial else 1.0
