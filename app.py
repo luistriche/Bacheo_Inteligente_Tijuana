@@ -8,6 +8,7 @@ Estudiante: Luis Armando Triche Ramírez
 import os
 import sqlite3
 import random
+import uuid
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from structures import SpatialHashTable, PriorityQueueHeap, ElementoBacheHeap, PotholeVisionClassifier
 
@@ -141,7 +142,7 @@ def api_reportar():
         )
         
         # 4. Desduplicación Espacial con Tabla Hash
-        folio_temporal = f"TIJ-{random.randint(10000, 99999)}"
+        folio_temporal = f"TIJ-{uuid.uuid4().hex[:6].upper()}"
         # TRUCO PARA LA PRESENTACION: Agregar ruido microscópico al GPS para que siempre sea "Nuevo" si así lo desean, 
         # o manejar el duplicado. Vamos a manejar el duplicado bien.
         hash_res = hash_table_spatial.search_or_insert(latitud, longitud, folio_temporal)
@@ -246,7 +247,7 @@ def api_baches_mapa():
 
 import requests
 
-TELEGRAM_TOKEN = "8893868614:AAFiAB5Bsy1noT1r2EdcX4AZiC9C3FW8XiE"
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN", "BOT_NO_CONFIGURADO")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 
 def send_telegram_message(chat_id, text):
@@ -276,7 +277,7 @@ def telegram_webhook():
             cursor.execute("SELECT nombre_vialidad, tipo_vialidad, aforo_promedio_diario FROM Vialidades WHERE id_vialidad = 1")
             v_info = cursor.fetchone()
             
-            folio_temporal = f"TIJ-TG-{random.randint(10000, 99999)}"
+            folio_temporal = f"TIJ-TG-{uuid.uuid4().hex[:6].upper()}"
             hash_res = hash_table_spatial.search_or_insert(lat, lon, folio_temporal)
             folio_final = hash_res['folio_original']
             

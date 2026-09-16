@@ -546,6 +546,9 @@
                 if (res.exito) {
                     const card = document.getElementById('resultadoCard');
                     card.classList.add('active');
+                    if (res.ia_disponible === false) {
+                        document.getElementById('resSeveridad').parentElement.innerHTML += '<br><span style="color:#ef4444; font-size:0.8rem; font-weight:bold;">⚠️ IA Offline: Requiere Inspección Humana</span>';
+                    }
                     document.getElementById('resFolio').innerText = `FOLIO: ${res.folio} (${res.estado_hash})`;
                     document.getElementById('resSeveridad').innerText = `${res.severidad} / 5`;
                     document.getElementById('resIpu').innerText = res.ipu;

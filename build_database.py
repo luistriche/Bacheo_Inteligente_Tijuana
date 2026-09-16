@@ -7,12 +7,14 @@ Estudiante: Luis Armando Triche Ramírez
 """
 
 import sqlite3
-import pandas as pd
+
 import random
 import os
 from datetime import datetime, timedelta
+from structures import calcular_ipu
+import csv
 
-BASE_DIR = '/home/triche777/Bacheo_Inteligente_Tijuana'
+BASE_DIR = '/home/triche777/Bacheo_Inteligente_Tijuana_Repo'
 DB_PATH = os.path.join(BASE_DIR, 'bacheo_tijuana.db')
 SCHEMA_PATH = os.path.join(BASE_DIR, 'schema.sql')
 CSV_RUTAS = '/home/triche777/Descargas/Codigo/rutas-transporte-tijuana.csv'
@@ -125,7 +127,7 @@ def populate_incident_reports(conn):
         
         # Fórmula del Índice de Prioridad Urbana (IPU) ponderado (0 a 100)
         # Severidad (30%), Riesgo Socavón (35%), Aforo Pesado (20%), Transporte Público (15%)
-        ipu = round(((severidad / 5.0) * 30.0) + (riesgo_socavon * 35.0) + (aforo_pesado * 20.0) + (afecta_tp * 15.0), 2)
+        ipu = calcular_ipu(severidad, riesgo_socavon, aforo_pesado, afecta_tp)
         
         reportes.append((
             folio, id_zona_a, 'Zona A (Habitacional)', lat, lon,
@@ -153,7 +155,7 @@ def populate_incident_reports(conn):
         afecta_tp = 1 # Pasan rutas de personal y transporte masivo
         riesgo_socavon = 0.98 # Socavón inminente detectado por plataforma
         
-        ipu = round(((severidad / 5.0) * 30.0) + (riesgo_socavon * 35.0) + (aforo_pesado * 20.0) + (afecta_tp * 15.0), 2)
+        ipu = calcular_ipu(severidad, riesgo_socavon, aforo_pesado, afecta_tp)
         # IPU: (1.0*30) + (0.98*35) + (0.95*20) + (1.0*15) = 30 + 34.3 + 19.0 + 15 = 98.3
         
         reportes.append((

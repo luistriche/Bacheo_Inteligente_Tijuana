@@ -126,10 +126,30 @@ class PriorityQueueHeap:
 import base64
 import requests
 import json
+import math
+
+def calcular_ipu(severidad, riesgo_socavon, aforo_pesado, afecta_tp):
+    """
+    Fórmula Académica del Índice de Prioridad Urbana (IPU) ponderado (0 a 100)
+    Basado en el Reporte DMAIC para el Ayuntamiento de Tijuana.
+    
+    Pesos:
+    - Severidad (1-5): 30%
+    - Riesgo Estructural de Socavón (0.0-1.0): 35%
+    - Aforo Pesado / Corredor Industrial (0.0-1.0): 20%
+    - Afectación a Transporte Público (0 o 1): 15%
+    """
+    severidad_norm = (severidad / 5.0) * 30.0
+    riesgo_norm = riesgo_socavon * 35.0
+    aforo_norm = aforo_pesado * 20.0
+    tp_norm = afecta_tp * 15.0
+    
+    return round(severidad_norm + riesgo_norm + aforo_norm + tp_norm, 2)
+
 import random
 import math
 
-GEMINI_API_KEY = "AQ.Ab8RN6ISD8oZmIDoj-RJTJWrZqSVst7IdELveF7q78Uw55" + "sxrw"
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 class PotholeVisionClassifier:
     @staticmethod
@@ -140,37 +160,34 @@ class PotholeVisionClassifier:
         densidad_fisuras = random.randint(40, 80)
         
         # Integración con Google Gemini 1.5 Flash (Vision) mediante REST (Sin librerías pesadas)
+        ia_disponible = True
         try:
-            if image_bytes and len(image_bytes) > 100:
-                img_b64 = base64.b64encode(image_bytes).decode('utf-8')
+            if not GEMINI_API_KEY:
+                raise ValueError("API Key no configurada")
                 
-                payload = {
-                    "contents": [{
-                        "parts": [
-                            {"text": "Eres un ingeniero civil experto en pavimentos. Analiza esta imagen de la calle. Responde ESTRICTAMENTE en formato JSON con estas claves: 'severidad' (entero 1 a 5, siendo 5 muy destructivo), 'profundidad' (string, ej: '15 cm'), 'fisuras' (entero 0 a 100, porcentaje de daño alrededor). Si no es un bache claro, asume severidad 1."},
-                            {"inline_data": {"mime_type": "image/jpeg", "data": img_b64}}
-                        ]
-                    }],
-                    "generationConfig": {
-                        "temperature": 0.1
-                    }
-                }
-                
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={GEMINI_API_KEY}"
-                resp = requests.post(url, json=payload, headers={'Content-Type': 'application/json'}, timeout=12)
-                
-                if resp.status_code == 200:
-                    data = resp.json()
-                    text_response = data['candidates'][0]['content']['parts'][0]['text']
-                    text_clean = text_response.replace('```json', '').replace('```', '').strip()
-                    ai_result = json.loads(text_clean)
-                    
-                    nivel_severidad = int(ai_result.get('severidad', nivel_severidad))
-                    profundidad = str(ai_result.get('profundidad', profundidad))
-                    densidad_fisuras = int(ai_result.get('fisuras', densidad_fisuras))
-                    print("✅ Gemini Vision procesó la imagen:", ai_result)
+            response = requests.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}",
+                headers={'Content-Type': 'application/json'},
+                json=payload,
+                timeout=10
+            )
+            response.raise_for_status()
+            res_data = response.json()
+            
+            raw_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            raw_text = raw_text.replace('```json', '').replace('```', '').strip()
+            json_res = json.loads(raw_text)
+            
+            nivel_severidad = int(json_res.get('nivel_severidad', 1))
+            profundidad = json_res.get('profundidad_estimada', 'Desconocida')
+            densidad_fisuras = int(json_res.get('densidad_fisuras_porcentaje', 10))
+            
         except Exception as e:
-            print("⚠️ Error en Gemini Vision API (simulando valores):", e)
+            print("⚠️ Error en IA o API Key faltante. Activando modo Manual/Heurístico:", e)
+            ia_disponible = False
+            nivel_severidad = 1 # Requiere inspección visual
+            profundidad = 'Pendiente Inspección'
+            densidad_fisuras = 0
 
         # Cálculo matemático original de Riesgo
         factor_zona = 1.8 if es_zona_industrial else 1.0
@@ -178,17 +195,17 @@ class PotholeVisionClassifier:
         volumen_estimado = (nivel_severidad ** 2) * (densidad_fisuras / 100.0)
         tasa_crecimiento = 1.0 + (0.5 * aforo_pesado)
         
-        riesgo_socavon = min(99.9, (volumen_estimado * tasa_crecimiento * factor_zona * factor_tp * 2.5))
-        ipu = min(100, int((nivel_severidad * 10) + (riesgo_socavon * 0.4) + (aforo_pesado * 20)))
+        riesgo_socavon_base = min(99.9, (volumen_estimado * tasa_crecimiento * factor_zona * factor_tp * 2.5))
+        riesgo_socavon_norm = riesgo_socavon_base / 100.0
         
-        if es_zona_industrial and nivel_severidad >= 4:
-            ipu = max(ipu, 85)
+        ipu = calcular_ipu(nivel_severidad, riesgo_socavon_norm, aforo_pesado, 1 if es_ruta_tp else 0)
             
         return {
             'nivel_severidad': nivel_severidad,
             'profundidad_estimada': profundidad,
             'densidad_fisuras': densidad_fisuras,
-            'riesgo_socavon': round(riesgo_socavon, 2),
-            'alerta_socavon': riesgo_socavon > 70.0,
-            'ipu': ipu
+            'riesgo_socavon': round(riesgo_socavon_base, 2),
+            'alerta_socavon': riesgo_socavon_base > 70.0,
+            'ipu': ipu,
+            'ia_disponible': ia_disponible
         }
