@@ -19,9 +19,28 @@ DB_PATH = os.path.join(BASE_DIR, 'bacheo_tijuana.db')
 
 if os.environ.get('VERCEL'):
     TMP_DB_PATH = '/tmp/bacheo_tijuana.db'
-    if not os.path.exists(TMP_DB_PATH):
+    if not os.path.exists(TMP_DB_PATH) and os.path.exists(DB_PATH):
         shutil.copy2(DB_PATH, TMP_DB_PATH)
     DB_PATH = TMP_DB_PATH
+
+
+def ensure_database():
+    """Si la base de datos no existe, la reconstruye desde el esquema y la semilla."""
+    if os.path.exists(DB_PATH):
+        return
+    try:
+        import build_database as bd
+        bd.DB_PATH = DB_PATH
+        bd.SCHEMA_PATH = os.path.join(BASE_DIR, 'schema.sql')
+        conn = bd.init_db()
+        bd.populate_vialidades(conn)
+        bd.populate_rutas(conn)
+        bd.populate_brigadas(conn)
+        bd.populate_incident_reports(conn)
+        conn.close()
+        print("[*] Base de datos generada automaticamente.")
+    except Exception as e:
+        print("Warning: no se pudo generar la base de datos:", e)
 
 app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'))
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max upload
@@ -335,6 +354,8 @@ def api_despachar(id_reporte):
     conn.commit()
     conn.close()
     return jsonify({'exito': True, 'mensaje': f'Cuadrilla nocturna asignada con éxito al reporte #{id_reporte}.'})
+
+ensure_database()
 
 try:
     cargar_heap_inicial()

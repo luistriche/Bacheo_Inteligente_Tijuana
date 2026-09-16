@@ -9,7 +9,9 @@ __pycache__/
 .env
 
 # Base de datos local (se regenera con build_database.py)
+# Se conserva la semilla del proyecto para que Vercel tenga datos.
 *.db
+!bacheo_tijuana.db
 
 # Binarios de build (usan GitHub Releases)
 builds/
